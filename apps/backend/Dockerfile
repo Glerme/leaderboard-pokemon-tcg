@@ -8,7 +8,7 @@ WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY apps/backend/package.json ./apps/backend/
 
-RUN pnpm install --frozen-lockfile --filter leaderboard-tcg-backend
+RUN pnpm install --filter leaderboard-tcg-backend
 
 COPY apps/backend ./apps/backend
 
@@ -24,7 +24,7 @@ WORKDIR /app
 COPY package.json pnpm-workspace.yaml pnpm-lock.yaml ./
 COPY apps/backend/package.json ./apps/backend/
 
-RUN pnpm install --frozen-lockfile --filter leaderboard-tcg-backend --prod
+RUN pnpm install --filter leaderboard-tcg-backend --prod
 
 COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
 COPY apps/backend/prisma ./apps/backend/prisma
