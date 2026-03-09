@@ -35,4 +35,4 @@ WORKDIR /app/apps/backend
 ENV NODE_ENV=production
 EXPOSE 3001
 
-CMD ["sh", "-c", "pnpm prisma migrate deploy && node dist/index.js"]
+CMD ["pnpm", "start"]
