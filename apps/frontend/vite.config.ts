@@ -9,10 +9,12 @@ export default defineConfig({
   },
   server: {
     port: Number(process.env.VITE_PORT) || 5173,
-  },
-  preview: {
-    port: Number(process.env.PORT) || 4173,
-    host: '0.0.0.0',
-    allowedHosts: 'all',
+    proxy: {
+      '/api': {
+        target: process.env.VITE_API_URL || 'http://localhost:3333',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ''),
+      },
+    },
   },
 })
