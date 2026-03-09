@@ -10,4 +10,8 @@ export default defineConfig({
   server: {
     port: Number(process.env.VITE_PORT) || 5173,
   },
+  preview: {
+    port: Number(process.env.PORT) || 4173,
+    host: '0.0.0.0',
+  },
 })
