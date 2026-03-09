@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "Score" ADD COLUMN     "byeLosses" INTEGER NOT NULL DEFAULT 0;

@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: leaderboard-tcg-db
+    restart: unless-stopped
+    env_file:
+      - apps/backend/.env
+    ports:
+      - "5432:5432"
+    volumes:
+      - leaderboard_tcg_data:/var/lib/postgresql/data
+
+volumes:
+  leaderboard_tcg_data:

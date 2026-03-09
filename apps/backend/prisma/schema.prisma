@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Championship {
+  id        String   @id @default(cuid())
+  name      String
+  date      DateTime
+  status    String   @default("open")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  scores    Score[]
+  rounds    Round[]
+
+  @@index([date])
+  @@index([status])
+}
+
+model Round {
+  id             String   @id @default(cuid())
+  championshipId String
+  roundNumber    Int
+  createdAt      DateTime @default(now())
+  championship   Championship @relation(fields: [championshipId], references: [id], onDelete: Cascade)
+  matches        Match[]
+  bye            Bye?
+
+  @@unique([championshipId, roundNumber])
+  @@index([championshipId])
+}
+
+model Bye {
+  id       String @id @default(cuid())
+  roundId  String @unique
+  playerId String
+  round    Round  @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  player   Player @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@index([playerId])
+}
+
+model Match {
+  id        String   @id @default(cuid())
+  roundId   String
+  player1Id String
+  player2Id String
+  result    String?
+  round     Round    @relation(fields: [roundId], references: [id], onDelete: Cascade)
+  player1   Player   @relation("MatchPlayer1", fields: [player1Id], references: [id], onDelete: Cascade)
+  player2   Player   @relation("MatchPlayer2", fields: [player2Id], references: [id], onDelete: Cascade)
+
+  @@index([roundId])
+  @@index([player1Id])
+  @@index([player2Id])
+}
+
+model Player {
+  id        String   @id @default(cuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  scores    Score[]
+  matchesAsPlayer1 Match[] @relation("MatchPlayer1")
+  matchesAsPlayer2 Match[] @relation("MatchPlayer2")
+  byes      Bye[]
+}
+
+model Score {
+  id             String       @id @default(cuid())
+  championshipId String
+  playerId       String
+  wins           Int          @default(0)
+  draws          Int          @default(0)
+  losses         Int          @default(0)
+  byeLosses      Int          @default(0)
+  championship   Championship @relation(fields: [championshipId], references: [id], onDelete: Cascade)
+  player         Player       @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([championshipId, playerId])
+  @@index([championshipId])
+  @@index([playerId])
+}

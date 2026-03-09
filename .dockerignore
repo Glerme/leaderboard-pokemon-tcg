@@ -1,0 +1,57 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build outputs
+dist/
+**/dist/
+.turbo/
+**/.turbo/
+
+# Environment
+.env
+.env.local
+.env.*.local
+.env.production
+**/.env
+**/.env.local
+**/.env.*.local
+**/.env.production
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Documentation
+docs/
+README.md
+*.md
+
+# Docker
+docker-compose.yml
+Dockerfile
+**/Dockerfile
+
+# Prisma database files
+**/prisma/*.db
+**/prisma/*.db-journal
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# Coverage
+coverage/
+**/coverage/
+
+# Frontend (not needed for backend build)
+apps/frontend/
