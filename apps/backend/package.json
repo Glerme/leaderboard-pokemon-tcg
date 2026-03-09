@@ -9,7 +9,7 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
-    "prisma:migrate:deploy": "dotenv -e .env.production -- prisma migrate deploy",
+    "db:migrate:production": "node --env-file=.env.production node_modules/prisma/build/index.js migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:production": "tsx prisma/seed.ts --env-file .env.production",
     "db:studio": "prisma studio"
