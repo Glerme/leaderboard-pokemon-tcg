@@ -9,18 +9,19 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
+    "db:migrate:production": "node --env-file=.env.production node_modules/prisma/build/index.js migrate deploy && node --env-file=.env.production node_modules/prisma/build/index.js generate",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:production": "tsx prisma/seed.ts --env-file .env.production",
     "db:studio": "prisma studio"
   },
   "dependencies": {
     "@prisma/client": "^6.0.0",
-    "prisma": "^6.0.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.6.1",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
+    "prisma": "^6.0.0",
     "zod": "^3.23.8"
   },
   "prisma": {
