@@ -28,6 +28,7 @@ RUN pnpm install --frozen-lockfile --filter leaderboard-tcg-backend --prod
 
 COPY --from=builder /app/apps/backend/dist ./apps/backend/dist
 COPY apps/backend/prisma ./apps/backend/prisma
+COPY apps/backend/prisma.config.ts ./apps/backend/
 
 WORKDIR /app/apps/backend
 
