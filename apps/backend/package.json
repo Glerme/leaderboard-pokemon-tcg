@@ -9,7 +9,7 @@
     "db:generate": "prisma generate",
     "db:push": "prisma db push",
     "db:migrate": "prisma migrate dev",
-    "db:migrate:production": "node --env-file=.env.production node_modules/prisma/build/index.js migrate deploy && node --env-file=.env.production node_modules/prisma/build/index.js generate",
+    "prisma:migrate:deploy": "dotenv -e .env.production -- prisma migrate deploy",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:production": "tsx prisma/seed.ts --env-file .env.production",
     "db:studio": "prisma studio"
@@ -33,6 +33,7 @@
     "@types/express": "^4.17.21",
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^22.9.0",
+    "dotenv-cli": "^11.0.0",
     "tsx": "^4.19.2",
     "typescript": "^5.6.3"
   }
