@@ -1,37 +1,37 @@
+import axios from 'axios'
 import { useAuthStore } from '@/features/auth/store/authStore'
 
-const BASE = '/api'
+export const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_URL,
+  headers: { 'Content-Type': 'application/json' },
+})
 
-function getToken(): string | null {
-  return useAuthStore.getState().token
-}
+apiClient.interceptors.request.use((config) => {
+  const token = useAuthStore.getState().token
+  if (token) config.headers.Authorization = `Bearer ${token}`
+  return config
+})
 
-export async function api<T>(
-  path: string,
-  options: RequestInit & { token?: string | null } = {}
-): Promise<T> {
-  const { token: optToken, ...init } = options
-  const token = optToken ?? getToken()
-  const headers: HeadersInit = {
-    'Content-Type': 'application/json',
-    ...(init.headers as Record<string, string>),
-  }
-  if (token) (headers as Record<string, string>)['Authorization'] = `Bearer ${token}`
+apiClient.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const message =
+      error.response?.data?.error ?? error.message ?? 'Erro na requisição'
+    return Promise.reject(new Error(message))
+  },
+)
 
-  const res = await fetch(`${BASE}${path}`, { ...init, headers })
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ error: res.statusText }))
-    throw new Error((err as { error?: string }).error ?? 'Erro na requisição')
-  }
-  if (res.status === 204) return undefined as T
-  return res.json() as Promise<T>
-}
+export const apiGet = <T>(path: string) =>
+  apiClient.get<T>(path).then((r) => r.data)
 
-export const apiGet = <T>(path: string) => api<T>(path, { method: 'GET' })
 export const apiPost = <T>(path: string, body: unknown) =>
-  api<T>(path, { method: 'POST', body: JSON.stringify(body) })
+  apiClient.post<T>(path, body).then((r) => r.data)
+
 export const apiPatch = <T>(path: string, body: unknown) =>
-  api<T>(path, { method: 'PATCH', body: JSON.stringify(body) })
+  apiClient.patch<T>(path, body).then((r) => r.data)
+
 export const apiPut = <T>(path: string, body: unknown) =>
-  api<T>(path, { method: 'PUT', body: JSON.stringify(body) })
-export const apiDelete = (path: string) => api<undefined>(path, { method: 'DELETE' })
+  apiClient.put<T>(path, body).then((r) => r.data)
+
+export const apiDelete = (path: string) =>
+  apiClient.delete(path).then(() => undefined)
