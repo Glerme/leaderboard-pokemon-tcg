@@ -41,8 +41,12 @@ rankingRouter.get('/monthly', async (req, res) => {
     }
   }
 
-  const ranking = Array.from(byPlayer.values()).sort(
-    (a, b) => b.totalMatchPoints - a.totalMatchPoints
-  )
+  const ranking = Array.from(byPlayer.values()).sort((a, b) => {
+    if (b.totalMatchPoints !== a.totalMatchPoints) return b.totalMatchPoints - a.totalMatchPoints
+    // desempate: mais campeonatos jogados no mês → melhor colocação
+    if (b.championships !== a.championships) return b.championships - a.championships
+    // desempate final: ordem alfabética determinística
+    return a.playerName.localeCompare(b.playerName)
+  })
   res.json({ year: y, month: m, ranking })
 })

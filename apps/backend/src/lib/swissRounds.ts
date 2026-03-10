@@ -1,6 +1,6 @@
 /**
  * Tabela oficial de rodadas suíças por número de jogadores.
- * Fonte: Play! Pokémon Tournament Rules Handbook – Variant #2: TCG Single Day
+ * Fonte: Play! Pokémon Tournament Rules Handbook – 3ª variante: Dia Único de Pokémon Estampas Ilustradas (apenas rodadas Suíças)
  * https://www.pokemon.com/static-assets/content-assets/cms2-pt-br/pdf/play-pokemon/rules/play-pokemon-tournament-rules-handbook-br.pdf
  */
 const TCG_SWISS_ROUNDS_TABLE: { maxPlayers: number; rounds: number }[] = [

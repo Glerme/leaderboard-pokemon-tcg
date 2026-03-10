@@ -1,5 +1,5 @@
 import { prisma } from './prisma.js'
-import { matchPointsFromRecord, winPercentage } from './scoring.js'
+import { matchPointsFromRecord, opponentWinPercentage } from './scoring.js'
 
 export interface StandingRow {
   playerId: string
@@ -11,6 +11,8 @@ export interface StandingRow {
   gamesPlayed: number
   opw: number
   oppw: number
+  /** Match points excluindo byes — usado internamente para cálculo de OPW. */
+  matchPointsNoByes: number
 }
 
 /**
@@ -90,6 +92,8 @@ export async function computeStandings(championshipId: string): Promise<Standing
     // gamesPlayed exclui byes (conforme handbook: bye não é oponente real)
     const gamesPlayed = mw + d + l
     const mp = matchPointsFromRecord(totalWins, d, l)
+    // Para OPW: byes NÃO contam como vitória (handbook seção 5.3.3.1)
+    const mpNoByes = matchPointsFromRecord(mw, d, l)
     const playerName = nameByPlayer.get(pid) ?? ''
     rows.push({
       playerId: pid,
@@ -98,13 +102,15 @@ export async function computeStandings(championshipId: string): Promise<Standing
       draws: d,
       losses: l,
       matchPoints: mp,
+      matchPointsNoByes: mpNoByes,
       gamesPlayed,
       opw: 0,
       oppw: 0,
     })
   }
 
-  const mpByPlayer = new Map(rows.map((r) => [r.playerId, r.matchPoints]))
+  // Para OPW usamos matchPointsNoByes (byes excluídos, conforme handbook 5.3.3.1)
+  const mpNoByes = new Map(rows.map((r) => [r.playerId, r.matchPointsNoByes]))
   const gpByPlayer = new Map(rows.map((r) => [r.playerId, r.gamesPlayed]))
   const rowByPlayer = new Map(rows.map((r) => [r.playerId, r]))
 
@@ -112,9 +118,9 @@ export async function computeStandings(championshipId: string): Promise<Standing
     const oppIds = Array.from(opponents.get(row.playerId) ?? [])
     if (oppIds.length === 0) continue
     const oppWinPcts = oppIds.map((oppId) => {
-      const oppMp = mpByPlayer.get(oppId) ?? 0
+      const oppMpNB = mpNoByes.get(oppId) ?? 0
       const oppGp = gpByPlayer.get(oppId) ?? 0
-      return winPercentage(oppMp, oppGp)
+      return opponentWinPercentage(oppMpNB, oppGp)
     })
     row.opw = oppWinPcts.reduce((a, b) => a + b, 0) / oppWinPcts.length
   }
